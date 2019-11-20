@@ -2,6 +2,10 @@
 
 Estudos utilizando Docker + Wordpress.
 
+# Problema atual
+
+* Ao rodar os testes de aceitação pelo PHP ele utiliza o dominio que não é o oficial do WP e quebra tudo
+
 ## Files
 
 * Download last version of Wordpress in https://br.wordpress.org/

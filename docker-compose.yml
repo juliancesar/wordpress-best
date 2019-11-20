@@ -109,6 +109,8 @@ services:
   wordpress-best-selenium-hub:
     <<: *default-app
     image: selenium/hub:3.141.59-xenon
+    links:
+      - wordpress-best-nginx:wordpress.localhost
     ports:
       - 4444:4444
     deploy:
@@ -123,6 +125,8 @@ services:
     image: selenium/node-chrome-debug:3.141.59-xenon
     volumes:
       - /dev/shm:/dev/shm
+    links:
+      - wordpress-best-nginx:wordpress.localhost
     depends_on:
       - wordpress-best-selenium-hub
     ports:
