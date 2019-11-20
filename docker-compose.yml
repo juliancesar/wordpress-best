@@ -1,0 +1,145 @@
+version: "3.7"
+
+# Configurações padrões para todos os containers
+x-app: &default-app
+  env_file:
+    - ".env"
+
+services:
+  # Container NGinX que recebe as requests HTTP
+  wordpress-best-nginx:
+    <<: *default-app
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+
+      # Esta pasta esta aqui para os recursos JS, CSS e imagens.
+      - ./wordpress:/var/www/html
+    depends_on:
+      - wordpress-best-php-fpm
+    links:
+      # Converte o name wordpress-best-php-fpm para ser usado internamente como Wordpress
+      - wordpress-best-php-fpm:wordpress
+    deploy:
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: "128M"
+
+  # Container PHP-FPM que interpreta os arquivos PHP (Somente arquivos PHP chegam aqui)
+  wordpress-best-php-fpm:
+    <<: *default-app
+    build: ./php-fpm
+    image: best/wordpress-best-php-fpm
+    volumes:
+      - ./wordpress:/var/www/html
+    depends_on:
+      - wordpress-best-memcached
+      - wordpress-best-database
+    links:
+      - wordpress-best-memcached
+      - wordpress-best-database
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "256M"
+
+  # Container para cache
+  wordpress-best-memcached:
+    <<: *default-app
+    image: memcached:latest
+    ports:
+      - 11211:11211
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "64M"
+
+  # Container de banco de dados
+  wordpress-best-database:
+    <<: *default-app
+    image: mariadb:latest
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    deploy:
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: "256M"
+
+  # Container de gestão do MariaDB
+  wordpress-best-adminer:
+    <<: *default-app
+    image: adminer
+    links:
+      - wordpress-best-database:db
+    ports:
+      - 8081:8080
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "128M"
+
+  # Container para gestão do MemCached
+  wordpress-best-phpmemcacheadmin:
+    <<: *default-app
+    image: hitwe/phpmemcachedadmin
+    ports:
+      - 8082:80
+    links:
+      - wordpress-best-memcached:memcached
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "128M"
+
+  ###### Containers de Teste ######
+
+  # Selenium Hub
+  wordpress-best-selenium-hub:
+    <<: *default-app
+    image: selenium/hub:3.141.59-xenon
+    ports:
+      - 4444:4444
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "256M"
+  
+  # Selenium - Chrome
+  wordpress-best-chrome:
+    <<: *default-app
+    image: selenium/node-chrome-debug:3.141.59-xenon
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - wordpress-best-selenium-hub
+    ports:
+      - 5900:5900
+    deploy:
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: "512M"
+  
+  # Selenium - Firefox
+  # wordpress-best-firefox:
+  #   <<: *default-app
+  #   image: selenium/node-firefox-debug:3.141.59-xenon
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   depends_on:
+  #     - wordpress-best-selenium-hub
+  #   ports:
+  #     - 9002:5900
