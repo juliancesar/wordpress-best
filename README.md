@@ -2,8 +2,6 @@
 
 Estudos utilizando Docker + Wordpress.
 
-> https://mermaidjs.github.io/mermaid-live-editor/
-
 ## Files
 
 * Download last version of Wordpress in https://br.wordpress.org/
