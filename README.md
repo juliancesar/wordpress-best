@@ -4,6 +4,11 @@ Estudos utilizando Docker + Wordpress.
 
 > https://mermaidjs.github.io/mermaid-live-editor/
 
+## Files
+
+* Download last version of Wordpress in https://br.wordpress.org/
+* Put uncompressed files in `/wordpress`
+
 ## Docker Compose
 
 Para que os limites de memória e cpu funcionem é necessário rodar o comando `docker-compose` com parâmetros diferentes.
