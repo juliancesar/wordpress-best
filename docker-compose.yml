@@ -5,6 +5,10 @@ x-app: &default-app
   env_file:
     - ".env"
 
+# Redes
+networks:
+  wordpress-best-network:
+
 services:
   # Container NGinX que recebe as requests HTTP
   wordpress-best-nginx:
@@ -29,6 +33,10 @@ services:
         limits:
           cpus: "1.00"
           memory: "128M"
+    networks:
+      wordpress-best-network:
+        aliases:
+          - "wordpress-best"
 
   # Container PHP-FPM que interpreta os arquivos PHP (Somente arquivos PHP chegam aqui)
   wordpress-best-php-fpm:
@@ -48,6 +56,8 @@ services:
         limits:
           cpus: "0.50"
           memory: "256M"
+    networks:
+      - wordpress-best-network
 
   # Container para cache
   wordpress-best-memcached:
@@ -74,6 +84,8 @@ services:
         limits:
           cpus: "1.00"
           memory: "256M"
+    networks:
+      - wordpress-best-network
 
   # Container de gestão do MariaDB
   wordpress-best-adminer:
@@ -88,6 +100,8 @@ services:
         limits:
           cpus: "0.50"
           memory: "128M"
+    networks:
+      - wordpress-best-network
 
   # Container para gestão do MemCached
   wordpress-best-phpmemcacheadmin:
@@ -102,6 +116,8 @@ services:
         limits:
           cpus: "0.50"
           memory: "128M"
+    networks:
+      - wordpress-best-network
 
   ###### Containers de Teste ######
 
@@ -109,8 +125,6 @@ services:
   wordpress-best-selenium-hub:
     <<: *default-app
     image: selenium/hub:3.141.59-xenon
-    links:
-      - wordpress-best-nginx:wordpress.localhost
     ports:
       - 4444:4444
     deploy:
@@ -118,15 +132,15 @@ services:
         limits:
           cpus: "0.50"
           memory: "256M"
-  
+    networks:
+      - wordpress-best-network
+
   # Selenium - Chrome
   wordpress-best-chrome:
     <<: *default-app
     image: selenium/node-chrome-debug:3.141.59-xenon
     volumes:
       - /dev/shm:/dev/shm
-    links:
-      - wordpress-best-nginx:wordpress.localhost
     depends_on:
       - wordpress-best-selenium-hub
     ports:
@@ -136,7 +150,9 @@ services:
         limits:
           cpus: "1.00"
           memory: "512M"
-  
+    networks:
+      - wordpress-best-network
+      
   # Selenium - Firefox
   # wordpress-best-firefox:
   #   <<: *default-app

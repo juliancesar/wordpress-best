@@ -35,20 +35,20 @@ Para saber quanto cada container tem alocado use o comando `docker stats`.
 ## Alteração de `/etc/hosts`
 
 ```
-127.0.0.1       wordpress.localhost
+127.0.0.1       wordpress-best
 ```
 
-> É importante instalar o WP já no domínio final (wordpress.localhost).
+> É importante instalar o WP já no domínio final (wordpress-best).
 
 # Geração do Certificado
 
 ```sh
 # Métodos antigos, não funcionaram bem no Chrome, ficaram inválidos
 # openssl req -subj '/CN=localhost' -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365
-# openssl req -subj '/CN=wordpress.localhost' -x509 -newkey rsa:4096 -nodes -keyout key_wordpress.pem -out cert_wordpress.pem -days 365
+# openssl req -subj '/CN=wordpress-best' -x509 -newkey rsa:4096 -nodes -keyout key_wordpress.pem -out cert_wordpress.pem -days 365
 
 # Novo método
-./self-signed/self-signer-tls.sh -c=BR --state=PR --common-name=wordpress.localhost --path=./nginx/ssl/ -l=Curitiba -o=Desenvolvedor -u=Diretoria -e=user@gmail.com 
+./self-signed/self-signer-tls.sh -c=BR --state=PR --common-name=wordpress-best --path=./nginx/ssl/ -l=Curitiba -o=Desenvolvedor -u=Diretoria -e=user@gmail.com 
 ```
 
 ## SSL + Chrome + Localhost
@@ -78,7 +78,7 @@ O chrome não deixa ter certificados auto assinados para localhost, a não ser q
 ## Execução dos Testes
 
 ```sh
-ab -n 10000 -r -c 100 -s 5 https://wordpress.localhost/
+ab -n 10000 -r -c 100 -s 5 https://wordpress-best/
 ```
 
 ## Testes
@@ -94,3 +94,10 @@ ab -n 10000 -r -c 100 -s 5 https://wordpress.localhost/
 * https://codeception.com/quickstart
 * https://stackoverflow.com/questions/58290566/install-ext-zip-for-mac/58300437#58300437
 * https://hub.docker.com/r/codeception/codeception/
+
+Na pasta tests:
+
+```
+composer install
+php vendor/bin/codecept run --steps
+```

@@ -7,13 +7,9 @@
 actor: AcceptanceTester
 modules:
     enabled:
-        # - PhpBrowser:
-        #     url: https://wordpress.localhost
-        # - \Helper\Acceptance
         - WebDriver:
-            #   url: https://wordpress.localhost
-              url: http://wordpress-best-nginx
-              #  host: http://localhost:4444/wd/hub
-              port: 4444
-              browser: chrome
+            url : https://wordpress-best
+            port: 4444
+            browser: chrome
+        - \Helper\Acceptance
     step_decorators: ~

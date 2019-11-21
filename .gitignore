@@ -2,3 +2,5 @@ mysql/data/**
 logs/**
 wordpress/**
 tests/vendor/**
+nginx/ssl/**
+.srl
