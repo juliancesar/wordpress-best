@@ -1,1 +1,1 @@
-php vendor/bin/codecept run --steps
+php vendor/bin/codecept run --steps --xml --html

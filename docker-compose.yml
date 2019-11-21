@@ -1,10 +1,5 @@
 version: "3.7"
 
-# Configurações padrões para todos os containers
-x-app: &default-app
-  env_file:
-    - ".env"
-
 # Redes
 networks:
   wordpress-best-network:
@@ -12,7 +7,6 @@ networks:
 services:
   # Container NGinX que recebe as requests HTTP
   wordpress-best-nginx:
-    <<: *default-app
     image: nginx:latest
     ports:
       - 80:80
@@ -40,7 +34,6 @@ services:
 
   # Container PHP-FPM que interpreta os arquivos PHP (Somente arquivos PHP chegam aqui)
   wordpress-best-php-fpm:
-    <<: *default-app
     build: ./php-fpm
     image: best/wordpress-best-php-fpm
     volumes:
@@ -58,10 +51,14 @@ services:
           memory: "256M"
     networks:
       - wordpress-best-network
+    environment: 
+      - WORDPRESS_DB_HOST=wordpress-best-database
+      - WORDPRESS_DB_USER=dev
+      - WORDPRESS_DB_PASSWORD=dev
+      - WORDPRESS_DB_NAME=wordpress
 
   # Container para cache
   wordpress-best-memcached:
-    <<: *default-app
     image: memcached:latest
     ports:
       - 11211:11211
@@ -73,7 +70,6 @@ services:
 
   # Container de banco de dados
   wordpress-best-database:
-    <<: *default-app
     image: mariadb:latest
     volumes:
       - ./mysql/data:/var/lib/mysql
@@ -86,10 +82,14 @@ services:
           memory: "256M"
     networks:
       - wordpress-best-network
+    environment: 
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
+      - MYSQL_DATABASE=wordpress
 
   # Container de gestão do MariaDB
   wordpress-best-adminer:
-    <<: *default-app
     image: adminer
     links:
       - wordpress-best-database:db
@@ -105,7 +105,6 @@ services:
 
   # Container para gestão do MemCached
   wordpress-best-phpmemcacheadmin:
-    <<: *default-app
     image: hitwe/phpmemcachedadmin
     ports:
       - 8082:80
@@ -121,7 +120,6 @@ services:
 
   # Containers de Teste - Selenium - Chrome
   wordpress-best-chrome:
-    <<: *default-app
     image: selenium/standalone-chrome-debug:3.141.59-xenon
     volumes:
       - /dev/shm:/dev/shm
