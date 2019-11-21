@@ -6,6 +6,6 @@ class FirstCest
     {
         $I->amOnPage('/');
         $I->see('Desenvolvimento');
-        $I->wait(600); 
+        $I->see('Olá, mundo!');
     }
 }

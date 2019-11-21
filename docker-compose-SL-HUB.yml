@@ -119,14 +119,31 @@ services:
     networks:
       - wordpress-best-network
 
-  # Containers de Teste - Selenium - Chrome
-  wordpress-best-chrome:
+  ###### Containers de Teste ######
+
+  # Selenium Hub
+  wordpress-best-selenium-hub:
     <<: *default-app
-    image: selenium/standalone-chrome-debug:3.141.59-xenon
-    volumes:
-      - /dev/shm:/dev/shm
+    image: selenium/hub:3.141.59-xenon
     ports:
       - 4444:4444
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "256M"
+    networks:
+      - wordpress-best-network
+
+  # Selenium - Chrome
+  wordpress-best-chrome:
+    <<: *default-app
+    image: selenium/node-chrome-debug:3.141.59-xenon
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - wordpress-best-selenium-hub
+    ports:
       - 5900:5900
     deploy:
       resources:
@@ -135,3 +152,14 @@ services:
           memory: "512M"
     networks:
       - wordpress-best-network
+      
+  # Selenium - Firefox
+  # wordpress-best-firefox:
+  #   <<: *default-app
+  #   image: selenium/node-firefox-debug:3.141.59-xenon
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   depends_on:
+  #     - wordpress-best-selenium-hub
+  #   ports:
+  #     - 9002:5900

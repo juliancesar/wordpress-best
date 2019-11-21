@@ -4,3 +4,4 @@ wordpress/**
 tests/vendor/**
 nginx/ssl/**
 .srl
+.cache/**

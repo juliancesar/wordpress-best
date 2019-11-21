@@ -2,6 +2,8 @@
 
 Estudos utilizando Docker + Wordpress.
 
+![](docker-compose.png)
+
 ## Files
 
 * Download last version of Wordpress in https://br.wordpress.org/
@@ -88,12 +90,21 @@ ab -n 10000 -r -c 100 -s 5 https://wordpress-best/
 ### Testes
 
 * https://codeception.com/quickstart
+  * Testes com docker - https://codeception.com/docs/12-ParallelExecution
 * https://stackoverflow.com/questions/58290566/install-ext-zip-for-mac/58300437#58300437
 * https://hub.docker.com/r/codeception/codeception/
 
-Na pasta tests:
+Na pasta tests (Se **rodar localmente**, sendo que o recomendado é usar o próprio container para isso):
 
 ```
 composer install
 php vendor/bin/codecept run --steps
+```
+
+### Mapa do Docker Compose
+
+Como gerar a imagem do mapa do Docker Compose (`docker-compose.yml`).
+
+```sh
+docker run --rm -it --name dcv -v $(pwd):/input pmsipilot/docker-compose-viz render -m image docker-compose.yml --force
 ```
